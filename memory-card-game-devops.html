@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DevOps Lifecycle — Memory Card Game (Previous Experiment)</title>
+  <style>
+    :root{
+      --bg:#0f1226;
+      --panel:#161a35;
+      --text:#e9ecff;
+      --muted:#a9b0d9;
+      --accent:#7c9bff;
+      --ok:#22c55e;
+      --warn:#f59e0b;
+      --info:#38bdf8;
+      --violet:#8b5cf6;
+      --rose:#fb7185;
+      --cyan:#06b6d4;
+      --emerald:#10b981;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 90% -20%, rgba(124,155,255,.15), transparent 60%),
+        radial-gradient(800px 500px at -10% 120%, rgba(139,92,246,.15), transparent 60%),
+        var(--bg);
+      line-height:1.45;
+    }
+    header{
+      padding:2.5rem 1.25rem 1rem;
+      text-align:center;
+    }
+    h1{
+      margin:0 0 .25rem;
+      font-size:clamp(1.4rem, 2.2vw + 1rem, 2.2rem);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0 auto;
+      max-width:900px;
+      color:var(--muted);
+      font-size:clamp(.9rem, 1vw + .6rem, 1rem);
+    }
+    .container{
+      max-width:1100px;
+      margin:1rem auto 2rem;
+      padding:0 1rem 2rem;
+    }
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 40%) , var(--panel);
+      border:1px solid rgba(124,155,255,.12);
+      border-radius:20px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.04);
+      padding:1rem;
+    }
+    .legend{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+      gap:.5rem .75rem;
+      margin-top:1rem;
+    }
+    .legend .item{
+      display:flex; align-items:center; gap:.6rem;
+      background:rgba(255,255,255,.03);
+      border:1px dashed rgba(124,155,255,.18);
+      padding:.65rem .75rem;
+      border-radius:14px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+    .dot{width:12px;height:12px;border-radius:50%}
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap:.75rem;
+      margin-top:1rem;
+    }
+    .kpi .card{
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(124,155,255,.12);
+      border-radius:16px;
+      padding:.9rem;
+    }
+    .kpi .title{
+      color:var(--muted);
+      font-size:.8rem;
+      letter-spacing:.2px;
+      text-transform:uppercase;
+    }
+    .kpi .value{
+      font-size:1.1rem;
+      margin-top:.25rem;
+    }
+    footer{
+      text-align:center;
+      color:var(--muted);
+      padding:1.25rem;
+      font-size:.85rem;
+    }
+    .hint{color:var(--muted); font-size:.9rem; margin:.75rem auto 0;max-width:900px;text-align:center}
+    @media print{
+      body{background:white;color:black}
+      .panel{box-shadow:none; border-color:#ddd}
+      .legend .item{border-color:#ccc}
+      .hint, footer{display:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DevOps Lifecycle — Memory Card Game</h1>
+    <p class="subtitle">A visual walkthrough of how the previous experiment (Memory Card Game) moves from idea ➜ code ➜ users, and how feedback flows back for continuous improvement.</p>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <!-- SVG TIMELINE / FLOW -->
+      <svg viewBox="0 0 1200 640" width="100%" height="auto" role="img" aria-label="DevOps lifecycle diagram with stages and arrows">
+        <!-- defs -->
+        <defs>
+          <linearGradient id="gradPlan" x1="0" x2="1">
+            <stop offset="0%" stop-color="#7c9bff" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#7c9bff" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradCode" x1="0" x2="1">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#8b5cf6" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradBuild" x1="0" x2="1">
+            <stop offset="0%" stop-color="#06b6d4" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#06b6d4" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradTest" x1="0" x2="1">
+            <stop offset="0%" stop-color="#22c55e" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#22c55e" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradRelease" x1="0" x2="1">
+            <stop offset="0%" stop-color="#f59e0b" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#f59e0b" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradDeploy" x1="0" x2="1">
+            <stop offset="0%" stop-color="#fb7185" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#fb7185" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradOperate" x1="0" x2="1">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity=".06"/>
+          </linearGradient>
+          <linearGradient id="gradMonitor" x1="0" x2="1">
+            <stop offset="0%" stop-color="#10b981" stop-opacity=".18"/>
+            <stop offset="100%" stop-color="#10b981" stop-opacity=".06"/>
+          </linearGradient>
+
+          <filter id="softShadow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="black" flood-opacity=".35"/>
+          </filter>
+
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#a9b0d9" />
+          </marker>
+        </defs>
+
+        <!-- background infinity loop for DevOps vibe -->
+        <g opacity=".18">
+          <path d="M150,220 C260,100 420,100 530,220 C640,340 800,340 910,220
+                   C1010,110 1120,130 1180,220
+                   M150,420 C260,540 420,540 530,420 C640,300 800,300 910,420
+                   C1010,530 1120,510 1180,420"
+                fill="none" stroke="#a9b0d9" stroke-width="16" stroke-linecap="round"/>
+        </g>
+
+        <!-- ROW 1 -->
+        <!-- PLAN -->
+        <g transform="translate(60,70)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradPlan)" stroke="#7c9bff" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Plan</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Define rules, card set, and UX goals</text>
+            <text x="16" y="78">• Backlog: shuffle, timer, moves counter</text>
+            <text x="16" y="98">• GitHub issues & milestones</text>
+          </g>
+        </g>
+        <line x1="315" y1="130" x2="350" y2="130" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- CODE -->
+        <g transform="translate(350,70)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradCode)" stroke="#8b5cf6" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Code</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• HTML/CSS/JS game logic</text>
+            <text x="16" y="78">• Accessibility: focus & ARIA</text>
+            <text x="16" y="98">• Git feature branches & PRs</text>
+          </g>
+        </g>
+        <line x1="605" y1="130" x2="640" y2="130" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- BUILD -->
+        <g transform="translate(640,70)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradBuild)" stroke="#06b6d4" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Build</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Lint & format (ESLint/Prettier)</text>
+            <text x="16" y="78">• Bundle/minify assets</text>
+            <text x="16" y="98">• Version bump & changelog</text>
+          </g>
+        </g>
+        <line x1="895" y1="130" x2="930" y2="130" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- TEST -->
+        <g transform="translate(930,70)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradTest)" stroke="#22c55e" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Test</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Unit tests: match logic & timer</text>
+            <text x="16" y="78">• E2E smoke: start → win flow</text>
+            <text x="16" y="98">• Lighthouse performance pass</text>
+          </g>
+        </g>
+
+        <!-- ROW 2 -->
+        <!-- RELEASE -->
+        <g transform="translate(60,290)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradRelease)" stroke="#f59e0b" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Release</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Tag GitHub release (v1.x)</text>
+            <text x="16" y="78">• Auto-changelog notes</text>
+            <text x="16" y="98">• Artifacts ready for deploy</text>
+          </g>
+        </g>
+        <line x1="315" y1="350" x2="350" y2="350" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- DEPLOY -->
+        <g transform="translate(350,290)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradDeploy)" stroke="#fb7185" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Deploy</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Vercel: import GitHub repo</text>
+            <text x="16" y="78">• Preview for each PR</text>
+            <text x="16" y="98">• Promote to Production</text>
+          </g>
+        </g>
+        <line x1="605" y1="350" x2="640" y2="350" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- OPERATE -->
+        <g transform="translate(640,290)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradOperate)" stroke="#38bdf8" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Operate</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Track uptime & errors</text>
+            <text x="16" y="78">• Edge caching & assets</text>
+            <text x="16" y="98">• Rollback strategy ready</text>
+          </g>
+        </g>
+        <line x1="895" y1="350" x2="930" y2="350" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)"/>
+
+        <!-- MONITOR -->
+        <g transform="translate(930,290)" filter="url(#softShadow)">
+          <rect x="0" y="0" rx="18" ry="18" width="250" height="120" fill="url(#gradMonitor)" stroke="#10b981" stroke-opacity=".6"/>
+          <text x="16" y="30" font-size="20" font-weight="700" fill="#e9ecff">Monitor & Feedback</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="58">• Analytics: session length, moves</text>
+            <text x="16" y="78">• User feedback & bug reports</text>
+            <text x="16" y="98">• New backlog items → Plan</text>
+          </g>
+        </g>
+
+        <!-- FEEDBACK ARROWS (closing the loop) -->
+        <path d="M1060,410 C1100,520 260,520 220,410" fill="none" stroke="#a9b0d9" stroke-width="2" marker-end="url(#arrow)" marker-start="url(#arrow)" opacity=".9"/>
+        <text x="595" y="535" text-anchor="middle" font-size="13" fill="#a9b0d9">Continuous Feedback Loop</text>
+
+        <!-- CI/CD and Repo notes -->
+        <g transform="translate(60,470)" opacity=".9">
+          <rect x="0" y="0" width="1120" height="90" rx="14" ry="14" fill="rgba(255,255,255,.04)" stroke="rgba(124,155,255,.2)"/>
+          <text x="16" y="28" font-size="18" font-weight="700" fill="#e9ecff">Automation & Tooling</text>
+          <g fill="#a9b0d9" font-size="14">
+            <text x="16" y="54">• GitHub: issues, branches, PR reviews</text>
+            <text x="360" y="54">• CI: build → test → preview (on every push)</text>
+            <text x="740" y="54">• Vercel: preview deployments + production promotion</text>
+            <text x="16" y="74">• Quality gates: lint, unit tests, Lighthouse threshold</text>
+          </g>
+        </g>
+      </svg>
+
+      <div class="legend">
+        <div class="item"><span class="dot" style="background:#7c9bff"></span> Plan</div>
+        <div class="item"><span class="dot" style="background:#8b5cf6"></span> Code</div>
+        <div class="item"><span class="dot" style="background:#06b6d4"></span> Build</div>
+        <div class="item"><span class="dot" style="background:#22c55e"></span> Test</div>
+        <div class="item"><span class="dot" style="background:#f59e0b"></span> Release</div>
+        <div class="item"><span class="dot" style="background:#fb7185"></span> Deploy</div>
+        <div class="item"><span class="dot" style="background:#38bdf8"></span> Operate</div>
+        <div class="item"><span class="dot" style="background:#10b981"></span> Monitor & Feedback</div>
+      </div>
+
+      <div class="kpi">
+        <div class="card">
+          <div class="title">Primary Artifact</div>
+          <div class="value">index.html + assets (Memory Card Game)</div>
+        </div>
+        <div class="card">
+          <div class="title">Branch Strategy</div>
+          <div class="value">main (protected) + feature/*</div>
+        </div>
+        <div class="card">
+          <div class="title">CI Gates</div>
+          <div class="value">Lint ✓ | Unit ✓ | Lighthouse ≥ 90</div>
+        </div>
+        <div class="card">
+          <div class="title">Deployment</div>
+          <div class="value">Vercel (Preview per PR → Prod)</div>
+        </div>
+      </div>
+    </section>
+
+    <p class="hint">Tip: Print or export to PDF for your report. This file is fully offline and self‑contained.</p>
+  </main>
+
+  <footer>
+    © Your Name — DevOps lifecycle diagram for the Memory Card Game (previous experiment). 
+  </footer>
+</body>
+</html>
